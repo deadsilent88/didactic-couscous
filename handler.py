@@ -1,40 +1,30 @@
 import os
-from transformers import AutoModelForCausalLM
-import torch
+from transformers import AutoTokenizer
 import runpod
+import sys
 
 print(">>> STAGE 1: HANDLER BOOTED >>>", flush=True)
 
-# === ENVIRONMENT SETUP ===
+# === Load Hugging Face Token
 hf_token = os.getenv("HUGGING_FACE_HUB_TOKEN")
 if not hf_token:
-    print(">>> ERROR: No Hugging Face token provided", flush=True)
+    print(">>> ERROR: HUGGING_FACE_HUB_TOKEN is missing or empty", flush=True)
 else:
-    print(">>> Hugging Face token loaded", flush=True)
+    print(">>> Hugging Face token detected", flush=True)
 
-# === ACCESS KEY CHECK (not used here, just logged) ===
-access_key_expected = os.getenv("RUNPOD_API_KEY")
-if access_key_expected:
-    print(">>> Access key enabled", flush=True)
-
-# === MODEL LOAD ONLY ===
+# === Load Tokenizer Only
 model_name = "mistralai/Mistral-7B-Instruct-v0.1"
 
 try:
-    print(f">>> STAGE 2: Loading model: {model_name}", flush=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype=torch.float16,
-        device_map="auto",
-        token=hf_token
-    )
-    print(">>> STAGE 3: Model loaded successfully", flush=True)
+    print(f">>> STAGE 2: Loading tokenizer for {model_name}", flush=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+    print(">>> STAGE 3: Tokenizer loaded successfully", flush=True)
 except Exception as e:
-    print(f">>> ERROR during model load: {e}", flush=True)
+    print(f">>> ERROR: Failed to load tokenizer — {e}", flush=True)
     raise
 
-# === NO GENERATION OR TOKENIZER ===
+# === No model loaded, no prompt generation
 def handler(event):
-    return {"status": "Model is loaded and handler is alive."}
+    return {"status": "Tokenizer loaded, model skipped"}
 
 runpod.serverless.start({"handler": handler})
