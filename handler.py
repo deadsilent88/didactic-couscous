@@ -1,7 +1,7 @@
 import os
-# Triggering rebuild
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+import runpod  # 👈 Critical import!
 
 # Debugging logs
 print(">>> Initializing handler...")
@@ -44,9 +44,7 @@ def handler(event):
         if not user_input or not isinstance(user_input, str):
             return {"error": "Invalid input. Please provide a 'text' field."}
 
-        prompt = f"You are an expert strategist. Provide detailed step-by-step instructions for:
-
-{user_input}"
+        prompt = f"You are an expert strategist. Provide detailed step-by-step instructions for:\n\n{user_input}"
         print(f">>> Received prompt: {prompt}")
 
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
@@ -59,3 +57,6 @@ def handler(event):
     except Exception as e:
         print(f">>> ERROR during generation: {e}")
         return {"error": str(e), "status": 500}
+
+# ✅ THIS LINE STARTS THE WORKER — MUST HAVE IT!
+runpod.serverless.start({"handler": handler})
