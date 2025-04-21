@@ -15,7 +15,7 @@ access_key_expected = os.getenv("RUNPOD_API_KEY")
 if access_key_expected:
     print(">>> Access key protection enabled.")
 
-model_name = "deepseek-ai/deepseek-coder-6.7b-base"
+model_name = "deepseek-ai/deepseek-coder-1.3b-base"
 
 try:
     print(">>> Loading tokenizer...")
