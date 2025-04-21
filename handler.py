@@ -3,6 +3,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import runpod  # Required for RunPod serverless
 
+# === DEBUG: Boot Check ===
+print(">>> HANDLER BOOTED >>>")
+
 # === Init Logs ===
 print(">>> Initializing handler...")
 
@@ -44,7 +47,7 @@ def handler(event):
         if not user_input:
             return {"error": "Invalid input. Please provide a 'text' field."}
 
-        # Use OpenHermes-style system prompt
+        # OpenHermes uses ChatML-like formatting
         prompt = f"<|im_start|>user\n{user_input}\n<|im_end|>\n<|im_start|>assistant"
 
         print(f">>> Running prompt: {prompt}")
