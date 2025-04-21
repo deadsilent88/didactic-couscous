@@ -17,7 +17,7 @@ if access_key_expected:
     print(">>> Access key protection enabled.")
 
 # === Load Model ===
-model_name = "mistralai/Mistral-7B-Instruct-v0.2"
+model_name = "teknium/OpenHermes-2.5-Mistral-7B"
 
 try:
     print(f">>> Loading model: {model_name}")
@@ -44,8 +44,8 @@ def handler(event):
         if not user_input:
             return {"error": "Invalid input. Please provide a 'text' field."}
 
-        # Format the prompt using Mistral's instruct-style structure
-        prompt = f"<s>[INST] {user_input} [/INST]"
+        # Use OpenHermes-style system prompt
+        prompt = f"<|im_start|>user\n{user_input}\n<|im_end|>\n<|im_start|>assistant"
 
         print(f">>> Running prompt: {prompt}")
 
@@ -54,7 +54,7 @@ def handler(event):
             **inputs,
             max_new_tokens=512,
             do_sample=False,
-            temperature=0.2,
+            temperature=0.3,
             top_p=0.95
         )
 
